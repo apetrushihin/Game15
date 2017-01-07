@@ -25,17 +25,15 @@ public class Game15 extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws Exception { //calling for draw method
         drawLevel(game);
     }
 
-    public void drawLevel (Stage gameWindow) throws Exception{
+    public void drawLevel (Stage gameWindow) throws Exception{ //setting parameters for game field
         gameWindow.setTitle("15 puzzle");
         gameWindow.setResizable(false);
         createMenu();
         layout.setPadding(new Insets(0,0,0,0));
-
-
         vbox.getChildren().addAll(createMenu(), layout);
         randomizeLevel();
         repaintField();
@@ -43,7 +41,7 @@ public class Game15 extends Application {
         gameWindow.show();
     }
 
-    public void randomizeLevel(){
+    public void randomizeLevel(){ //randomizing tiles positions
         Random random = new Random();
         int[] invariants = new int[16];
 
@@ -51,7 +49,7 @@ public class Game15 extends Application {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 numbers[i][j] = 0;
-                invariants[i*4 + j] = 0;
+                invariants[i*4 + j] = 0; //define which tile will be blank
             }
         }
 
@@ -62,15 +60,17 @@ public class Game15 extends Application {
                 k = random.nextInt(4);
                 l = random.nextInt(4);
             }
-            while (numbers[k][l] != 0);
-            numbers[k][l] = i;
-            invariants[k * 4 + l] = i;
+            while (numbers[k][l] != 0); //until numbers not equal 0
+            numbers[k][l] = i; //equals i from 1 to 15
+            invariants[k * 4 + l] = i; //define positions of all tiles, except blank tile
             }
         }
-        while (!gameHasSolution(invariants));
+        while (!gameHasSolution(invariants)); //generate field until game has solution!
     }
 
     public static boolean gameHasSolution(int[] state){
+        //if result is false then generate again, true = start playing
+
         //prepare the mapping from each tile to its position
         int[] positions = new int[16];
         for(int i = 0; i < state.length; i++){
@@ -88,7 +88,7 @@ public class Game15 extends Application {
         for(int i = 0; i < positions.length; i++){
             if(visited[i])
                 continue;
-            //a new cycle starts at i. Count its length..
+            //a new cycle starts at i. Count its length
             int cycleLength = 0;
             int nextTile = i;
             while(!visited[nextTile]){
@@ -103,7 +103,7 @@ public class Game15 extends Application {
         return isEvenState == (evenCount % 2 == 0);
     }
 
-    public void repaintField() {
+    public void repaintField() { //drawing buttons on the gaming field
         layout.getChildren().clear();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -114,7 +114,7 @@ public class Game15 extends Application {
                 button.setMinWidth(100);
                 button.setFocusTraversable(false);
                 layout.add(button, i, j);
-                if (numbers[i][j] == 0) {
+                if (numbers[i][j] == 0) { //hiding "0" blank button
                     button.setVisible(false);
                 } else
                     button.setOnAction(new EventHandler<ActionEvent>() {
@@ -131,7 +131,7 @@ public class Game15 extends Application {
     }
 
 
-    public boolean checkWin() {
+    public boolean checkWin() { //checks if game finished, true=end game, false=lets play some more
         int a = 1;
         boolean status = true;
         for (int i = 0; i <4; i++)
@@ -171,8 +171,9 @@ public class Game15 extends Application {
         return menu;
     }
 
-    public void change(int num) {
+    public void change(int num) { //sliding buttons up, bottom, left, right
         int i = 0, j = 0;
+        //searching for blank tile to make a move
         for (int k = 0; k < 4; k++) {
             for (int l = 0; l < 4; l++) {
                 if (numbers[k][l] == num) {
@@ -181,24 +182,30 @@ public class Game15 extends Application {
                 }
             }
         }
-        if (i > 0) {
-            if (numbers[i - 1][j] == 0) {
-                numbers[i - 1][j] = num;
-                numbers[i][j] = 0;
+
+        //sliding the tiles in the grid
+        //sliding up (row)
+        if (i > 0) { //checks if we can slide
+            if (numbers[i - 1][j] == 0) { //comparing the coordinates of the tile with button "0"
+                numbers[i - 1][j] = num; //num = coordinates of the tile
+                numbers[i][j] = 0; //swapping buttons
             }
         }
+        //sliding down (row)
         if (i < 3) {
             if (numbers[i + 1][j] == 0) {
                 numbers[i + 1][j] = num;
                 numbers[i][j] = 0;
             }
         }
+        //sliding left(column)
         if (j > 0) {
             if (numbers[i][j - 1] == 0) {
                 numbers[i][j - 1] = num;
                 numbers[i][j] = 0;
             }
         }
+        //sliding right(column)
         if (j < 3) {
             if (numbers[i][j + 1] == 0) {
                 numbers[i][j + 1] = num;
